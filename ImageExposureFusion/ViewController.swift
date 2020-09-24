@@ -9,11 +9,14 @@
 import UIKit
 import AVFoundation
 
-
-
 class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
-    let isoValues: [Float] = [400, 800, 1600, 2300]
-    let shotTime = CMTimeMake(value: 1, timescale: 5)
+
+    let shotsConfig : [(time: CMTime, iso: Float)] = [
+        (time : CMTimeMake(value: 1, timescale: 5), iso: 400),
+        (time : CMTimeMake(value: 1, timescale: 5), iso: 800),
+        (time : CMTimeMake(value: 1, timescale: 5), iso: 1600),
+        (time : CMTimeMake(value: 1, timescale: 5), iso: 2300),
+    ]
 
     var captureSesssion : AVCaptureSession!
     var cameraOutput : AVCapturePhotoOutput!
@@ -26,7 +29,7 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
     @IBOutlet weak var previewView: UIView!
     
     override open var shouldAutorotate: Bool {
-            return false
+            false
         }
 
     override func viewDidLoad() {
@@ -57,15 +60,15 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
 
     @IBAction func didPressTakePhoto(_ sender: UIButton) {
         if ( cameraOutput.maxBracketedCapturePhotoCount < 3 ) { return; }
-        let result = isoValues.chunked(into: 4)
-        let shot = takeShots(exposures:)
-        result.map(shot)
+        let chunks = shotsConfig.chunked(into: 4)
+        let shotFunction = takeShots(shots:)
+        chunks.map(shotFunction)
     }
 
-    func takeShots(exposures: [Float]){
+    func takeShots(shots: [(time: CMTime, iso: Float)]){
 
-        let exposureSettings = exposures.map { (exposure) -> AVCaptureBracketedStillImageSettings in
-            AVCaptureManualExposureBracketedStillImageSettings.manualExposureSettings(exposureDuration: shotTime, iso: exposure);
+        let exposureSettings = shots.map { (shot) -> AVCaptureBracketedStillImageSettings in
+            AVCaptureManualExposureBracketedStillImageSettings.manualExposureSettings(exposureDuration: shot.time, iso: shot.iso);
         }
 
         let photoSettings = AVCapturePhotoBracketSettings(
@@ -82,16 +85,13 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
 
         let imageData = photo.fileDataRepresentation()
-        let cgimageData = photo.cgImageRepresentation()
 
-        if let data = cgimageData, let image: UIImage = UIImage(cgImage: data.takeUnretainedValue()) {
-        //if let data = imageData, let image: UIImage = UIImage(data: data) {
-            //saver.saveImage(image: image)
+        if let data = imageData, let image: UIImage = UIImage(data: data) {
             saver.savePhoto(photo: photo)
             imageCollector.append(image)
         }
 
-        if (imageCollector.count == isoValues.count) {
+        if (imageCollector.count == shotsConfig.count) {
             let result = imageProcessor.processImages(imageCollector)!
             self.capturedImage.image = result
             imageCollector = []
@@ -102,28 +102,7 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
             print("error occure : \(error.localizedDescription)")
         }
     }
-    /*
-    func photoOutput(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
 
-        if let error = error {
-            print("error occure : \(error.localizedDescription)")
-        }
-
-        if  let sampleBuffer = photoSampleBuffer,
-            let previewBuffer = previewPhotoSampleBuffer,
-            let dataImage =  AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer:  sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
-            print(UIImage(data: dataImage)?.size as Any)
-
-            let dataProvider = CGDataProvider(data: dataImage as CFData)
-            let cgImageRef: CGImage! = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
-            let image = UIImage(cgImage: cgImageRef, scale: 1.0, orientation: UIImage.Orientation.right)
-
-            self.capturedImage.image = image
-        } else {
-            print("some error here")
-        }
-    }
-    */
     func askPermission() {
         print("here")
         let cameraPermissionStatus =  AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
