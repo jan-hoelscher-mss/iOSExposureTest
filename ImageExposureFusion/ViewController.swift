@@ -9,25 +9,18 @@
 import UIKit
 import AVFoundation
 
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        return stride(from: 0, to: count, by: size).map {
-            Array(self[$0 ..< Swift.min($0 + size, count)])
-        }
-    }
-}
+
 
 class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
-    
+    let isoValues: [Float] = [400, 800, 1600, 2300]
+    let shotTime = CMTimeMake(value: 1, timescale: 5)
+
     var captureSesssion : AVCaptureSession!
     var cameraOutput : AVCapturePhotoOutput!
     var previewLayer : AVCaptureVideoPreviewLayer!
     var imageCollector : [UIImage] = []
     var imageProcessor = ImageProcessorBridge()
     var saver = PhotoAlbumSaver()
-
-    let exposureValues: [Float] = [0, 2, 4, 6]
-    let isoValues: [Float] = [800, 1600, 2304]
 
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
@@ -43,11 +36,6 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
         cameraOutput = AVCapturePhotoOutput()
 
         let device = AVCaptureDevice.default(for: AVMediaType.video)!
-        //let device = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back)!
-        print(AVCaptureDevice.devices())
-        device.formats.map { format -> Void in
-            print(format.maxISO)
-        }
         if let input = try? AVCaptureDeviceInput(device: device) {
                 if (captureSesssion.canAddInput(input)) {
                     captureSesssion.addInput(input)
@@ -75,13 +63,9 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
     }
 
     func takeShots(exposures: [Float]){
-        print(exposures)
-        let makeAutoExposureSettings = AVCaptureAutoExposureBracketedStillImageSettings.autoExposureSettings(exposureTargetBias:)
-        //let exposureSettings = exposures.map(makeAutoExposureSettings)
-
 
         let exposureSettings = exposures.map { (exposure) -> AVCaptureBracketedStillImageSettings in
-            AVCaptureManualExposureBracketedStillImageSettings.manualExposureSettings(exposureDuration: CMTimeMake(value: 2, timescale: 5), iso: exposure);
+            AVCaptureManualExposureBracketedStillImageSettings.manualExposureSettings(exposureDuration: shotTime, iso: exposure);
         }
 
         let photoSettings = AVCapturePhotoBracketSettings(
@@ -90,7 +74,7 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
                 bracketedSettings: exposureSettings
         )
         photoSettings.isLensStabilizationEnabled = cameraOutput.isLensStabilizationDuringBracketedCaptureSupported
-        let tmp = cameraOutput.maxPhotoQualityPrioritization
+
         cameraOutput.maxPhotoQualityPrioritization = AVCapturePhotoOutput.QualityPrioritization.quality;
         cameraOutput.capturePhoto(with: photoSettings, delegate: self)
     }
