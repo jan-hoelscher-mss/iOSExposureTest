@@ -11,6 +11,7 @@
 		A7C4A5C4587747ACEDD03B55 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7C4AFF4F8D5244780648B99 /* Main.storyboard */; };
 		A7C4A64392B499142A821EF5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7C4A075353F055ED3CC2226 /* LaunchScreen.storyboard */; };
 		A7C4AADD5FF6B2F8235977EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7C4A2CB25DCB621107E5EE7 /* Assets.xcassets */; };
+		A7C4AC225339F68EBDC91F6C /* install_opencv.sh in Resources */ = {isa = PBXBuildFile; fileRef = A7C4AECE7BD18E94766C1A13 /* install_opencv.sh */; };
 		A7C4AE1CBB25B0E6D1568C49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C4ABC35869D3D561BA5BE9 /* AppDelegate.swift */; };
 		A7C4AFB250342EBC49317943 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C4A79BDEAC032A1CCEEBE7 /* ViewController.swift */; };
 		D9B524EC251A311000B444DC /* PhotoAlbumSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B524EB251A311000B444DC /* PhotoAlbumSaver.swift */; };
@@ -28,6 +29,7 @@
 		A7C4ABC35869D3D561BA5BE9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A7C4ABF2C3A77140CA0870EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A7C4AE1B387AC8ECB6DC7D76 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
+		A7C4AECE7BD18E94766C1A13 /* install_opencv.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = install_opencv.sh; sourceTree = "<group>"; };
 		D9B524EB251A311000B444DC /* PhotoAlbumSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbumSaver.swift; sourceTree = "<group>"; };
 		D9B524F1251A364700B444DC /* ImageExposureFusion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageExposureFusion-Bridging-Header.h"; sourceTree = "<group>"; };
 		D9B524F2251A364700B444DC /* openCVImageProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = openCVImageProcessor.cpp; sourceTree = "<group>"; };
@@ -55,6 +57,7 @@
 				D9B52C71251B968B00B444DC /* opencv2.framework */,
 				A7C4A36327A9B5323DC2397A /* Products */,
 				A7C4A4F8BCB6B94D53A427B3 /* ImageExposureFusion */,
+				A7C4AECE7BD18E94766C1A13 /* install_opencv.sh */,
 			);
 			sourceTree = "<group>";
 		};
@@ -146,6 +149,7 @@
 				A7C4AADD5FF6B2F8235977EE /* Assets.xcassets in Resources */,
 				A7C4A64392B499142A821EF5 /* LaunchScreen.storyboard in Resources */,
 				A7C4A5C4587747ACEDD03B55 /* Main.storyboard in Resources */,
+				A7C4AC225339F68EBDC91F6C /* install_opencv.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
