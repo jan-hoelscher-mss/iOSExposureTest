@@ -12,10 +12,10 @@ import AVFoundation
 class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
 
     let shotsConfig : [(time: CMTime, iso: Float)] = [
-        (time : CMTimeMake(value: 1, timescale: 5), iso: 400),
-        (time : CMTimeMake(value: 1, timescale: 5), iso: 800),
-        (time : CMTimeMake(value: 1, timescale: 5), iso: 1600),
-        (time : CMTimeMake(value: 1, timescale: 5), iso: 2300),
+        (time : CMTimeMake(value: 2, timescale: 5), iso: 400),
+        (time : CMTimeMake(value: 2, timescale: 5), iso: 800),
+        (time : CMTimeMake(value: 2, timescale: 5), iso: 1600),
+        (time : CMTimeMake(value: 2, timescale: 5), iso: 2300),
     ]
 
     var captureSesssion : AVCaptureSession!
@@ -27,7 +27,9 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
 
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
-    
+    @IBOutlet weak var activity: UIActivityIndicatorView!
+    @IBOutlet weak var waitLabel: UILabel!
+
     override open var shouldAutorotate: Bool {
             false
         }
@@ -37,7 +39,14 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
         captureSesssion = AVCaptureSession()
         captureSesssion.sessionPreset = AVCaptureSession.Preset.photo
         cameraOutput = AVCapturePhotoOutput()
+        waitLabel.transform = CGAffineTransform(rotationAngle: 3.14/2);
+        waitLabel.center = activity.center;
+        var frame = waitLabel.frame;
 
+        frame.origin.x -= 30;
+        waitLabel.frame = frame;
+        waitLabel.isHidden = true;
+        activity.isHidden = true;
         let device = AVCaptureDevice.default(for: AVMediaType.video)!
         if let input = try? AVCaptureDeviceInput(device: device) {
                 if (captureSesssion.canAddInput(input)) {
@@ -62,6 +71,8 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
         if ( cameraOutput.maxBracketedCapturePhotoCount < 3 ) { return; }
         let chunks = shotsConfig.chunked(into: 4)
         let shotFunction = takeShots(shots:)
+        waitLabel.isHidden = false;
+        activity.startAnimating();
         chunks.map(shotFunction)
     }
 
@@ -96,6 +107,8 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate  {
             self.capturedImage.image = result
             imageCollector = []
             saver.saveImage(image: result)
+            waitLabel.isHidden = true;
+            activity.stopAnimating();
         }
 
         if let error = error {
