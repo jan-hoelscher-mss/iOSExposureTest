@@ -9,13 +9,9 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
+class ViewController: UIViewController, AVCapturePhotoCaptureDelegate, UIActionSheetDelegate {
 
-    let shotsConfig: [(time: CMTime, iso: Float)] = [
-        (time: CMTimeMake(value: 2, timescale: 5), iso: 400),
-        (time: CMTimeMake(value: 2, timescale: 5), iso: 800),
-        (time: CMTimeMake(value: 2, timescale: 5), iso: 1600),
-        (time: CMTimeMake(value: 2, timescale: 5), iso: 2300),
+    var shotsConfig: [(time: CMTime, iso: Float)] = [
     ]
 
     var captureSesssion: AVCaptureSession!
@@ -25,10 +21,25 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     var imageProcessor = ImageProcessorBridge()
     var saver = PhotoAlbumSaver()
 
+    var maxIso: Float = 0.0
+    var minIso: Float = 0.0
+
+    var maxExposure = CMTime.zero
+    var minExposure = CMTime.zero
+
     @IBOutlet weak var capturedImage: UIImageView!
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @IBOutlet weak var waitLabel: UILabel!
+
+    @IBOutlet weak var exposureSlider: UISlider!
+    @IBOutlet weak var isoSlider: UISlider!
+
+    @IBOutlet weak var exposureLabel: UILabel!
+    @IBOutlet weak var isoLabel: UILabel!
+
+
+    let device = AVCaptureDevice.default(for: AVMediaType.video)!
 
     override open var shouldAutorotate: Bool {
         false
@@ -47,16 +58,24 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         waitLabel.frame = frame;
         waitLabel.isHidden = true;
         activity.isHidden = true;
-        let device = AVCaptureDevice.default(for: AVMediaType.video)!
+
         if let input = try? AVCaptureDeviceInput(device: device) {
             if (captureSesssion.canAddInput(input)) {
+                minExposure = device.activeFormat.minExposureDuration
+                maxExposure = device.activeFormat.maxExposureDuration
+
+                minIso = device.activeFormat.minISO
+                maxIso = device.activeFormat.maxISO
+
                 captureSesssion.addInput(input)
                 if (captureSesssion.canAddOutput(cameraOutput)) {
                     captureSesssion.addOutput(cameraOutput)
                     previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
                     previewLayer.frame = previewView.bounds
-                    previewView.layer.addSublayer(previewLayer)
+                    previewView.layer.insertSublayer(previewLayer, at: 0)
                     captureSesssion.startRunning()
+                    configureCamera()
+                    updateShotsConfig()
                 }
             } else {
                 print("issue here : captureSesssion.canAddInput")
@@ -65,6 +84,68 @@ class ViewController: UIViewController, AVCapturePhotoCaptureDelegate {
             print("some problem here")
         }
 
+    }
+
+    @IBAction func onExposureChange(sender: UISlider) {
+        configureCamera()
+        updateShotsConfig()
+        print("exposure slider changed \(sender.value) \(getExposureForValue(value: Double(sender.value)))")
+    }
+
+    @IBAction func onIsoChange(sender: UISlider){
+        configureCamera()
+        updateShotsConfig()
+        print("iso slider changed \(sender.value) \(getIsoForValue(value: sender.value))")
+    }
+
+    func getIsoForValue(value: Float) -> Float {
+        ((maxIso - minIso) * value) + minIso
+    }
+
+    func getExposureForValue(value: Double) -> CMTime{
+        CMTimeAdd(CMTimeMultiplyByFloat64(CMTimeSubtract(maxExposure, minExposure), multiplier: value), minExposure)
+    }
+
+    func configureCamera(){
+        isoLabel.text = "ISO: \(getIsoForValue(value: isoSlider.value))"
+        let time = getExposureForValue(value: Double(exposureSlider.value))
+        exposureLabel.text = "Exposure: \(time.value)/\(time.timescale)"
+        do {
+            try device.lockForConfiguration()
+            device.setExposureModeCustom(duration: getExposureForValue(value: Double(exposureSlider.value)), iso: getIsoForValue(value: isoSlider.value))
+            device.unlockForConfiguration()
+        } catch {
+            print("error setting config")
+        }
+    }
+
+    func updateShotsConfig(){
+        let time = getExposureForValue(value: Double(exposureSlider.value))
+        let iso = getIsoForValue(value: isoSlider.value)
+        shotsConfig = [
+            (time: time, iso: max(iso - 800, minIso)),
+            (time: time, iso: max(iso - 400, minIso)),
+            (time: time, iso: iso),
+            (time: time, iso: min(iso + 600, maxIso)),
+        ]
+    }
+
+    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int)
+    {
+        print("\(buttonIndex)")
+        switch (buttonIndex){
+
+        case 0:
+            print("Cancel")
+        case 1:
+            print("Save")
+        case 2:
+            print("Delete")
+        default:
+            print("Default")
+                //Some code here..
+
+        }
     }
 
     @IBAction func didPressTakePhoto(_ sender: UIButton) {

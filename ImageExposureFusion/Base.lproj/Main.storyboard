@@ -19,6 +19,36 @@
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hug-9Y-YYq">
                                 <rect key="frame" x="0.0" y="44" width="375" height="550"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="sXZ-hx-Ast">
+                                        <rect key="frame" x="6" y="0.0" width="363" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <action selector="onExposureChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="MeZ-Aw-dHd"/>
+                                        </connections>
+                                    </slider>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="En8-NO-4C0">
+                                        <rect key="frame" x="63" y="27" width="249" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CPf-0l-VVJ">
+                                        <rect key="frame" x="63" y="93" width="249" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Y96-3R-53q">
+                                        <rect key="frame" x="6" y="56" width="363" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <action selector="onIsoChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="jev-Bg-dFZ"/>
+                                        </connections>
+                                    </slider>
+                                </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EPg-tS-Y0J">
@@ -52,6 +82,10 @@
                     <connections>
                         <outlet property="activity" destination="2qg-ng-2bN" id="fRR-KB-a77"/>
                         <outlet property="capturedImage" destination="EPg-tS-Y0J" id="24e-Ka-YfT"/>
+                        <outlet property="exposureLabel" destination="En8-NO-4C0" id="7tx-Sk-sGJ"/>
+                        <outlet property="exposureSlider" destination="sXZ-hx-Ast" id="bcZ-7t-m64"/>
+                        <outlet property="isoLabel" destination="CPf-0l-VVJ" id="klA-s8-z6m"/>
+                        <outlet property="isoSlider" destination="Y96-3R-53q" id="by6-Rn-iy7"/>
                         <outlet property="previewView" destination="hug-9Y-YYq" id="RyK-YA-wbZ"/>
                         <outlet property="waitLabel" destination="NBj-BF-Jia" id="rA7-06-uIX"/>
                     </connections>
