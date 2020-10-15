@@ -23,19 +23,23 @@
     std::vector<cv::Mat> aligned;
 
     for(UIImage * uiimage in sourceImages){
+        
         cv::Mat opencvImage;
         UIImageToMat(uiimage, opencvImage, false);
-        cv::cvtColor(opencvImage, opencvImage, cv::COLOR_RGBA2RGB);
-        images.push_back(opencvImage);
+        
+        cv::Mat opencvImageOut;
+        cv::cvtColor(opencvImage, opencvImageOut, cv::COLOR_RGBA2RGB);
+        images.push_back(opencvImageOut);
     }
 
-    cv::Ptr<cv::AlignMTB> alignMTB = cv::createAlignMTB();
-    alignMTB->process(images, aligned);
+    //cv::Ptr<cv::AlignMTB> alignMTB = cv::createAlignMTB();
+    //alignMTB->process(images, aligned);
     
     cv::Mat exposureFusion;
     cv::Ptr<cv::MergeMertens> mergeMertens = cv::createMergeMertens();
     mergeMertens->process(images, exposureFusion);
     exposureFusion = exposureFusion * 255;
+
     cv::Mat fusion8bit;
     exposureFusion.convertTo(fusion8bit, CV_8U);
     UIImage * result = MatToUIImage( fusion8bit );
